@@ -1,0 +1,21 @@
+@font-face { font-family: 'icn'; src: url('file:///opt/usr/apps/djm5KzkDJb/res/wgt/icn.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+
+.event--english .event-lang:after { background-image: url("file:///opt/usr/apps/djm5KzkDJb/res/wgt/logos/uk2.svg"); }		
+.event--english.event--online .event-lang:after { background-image: url("file:///opt/usr/apps/djm5KzkDJb/res/wgt/logos/uk.svg"); }
+.event--german .event-lang:before { background-image: url("file:///opt/usr/apps/djm5KzkDJb/res/wgt/logos/de2.svg"); }				
+.event--german.event--online .event-lang:before { background-image: url("file:///opt/usr/apps/djm5KzkDJb/res/wgt/logos/de.svg"); }
+
+.event-content {
+	overflow-x:hidden;
+	overflow-y:auto;
+	white-space:nowrap;
+}
+
+.event-content::-webkit-scrollbar {
+	display:none;
+}
+
+.setting--hover label {
+	transform:scale(1.02);
+	font-weight:normal;
+}
