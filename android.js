@@ -429,7 +429,7 @@ function start() {
 									if (e.pointerId===pId) {
 										x-=e.clientX;
 										y=Math.abs(e.clientY-y);
-										if (y<ty*x) {
+										if (y<ty*Math.abs(x)) {
 											x-=e.clientX;
 											if (-x>dx) player.nextStream();
 												else if (x>dx) player.previousStream();
