@@ -49,12 +49,6 @@ function start() {
 	
 	$device=(function() {
 		
-		// todo: dynamische Erzeugung der Elemente
-		(function() {
-			const exitMsg=document.createElement("div");
-			exitMsg.className="msg-exit";
-			document.body.appendChild(exitMsg);
-		})();
 		setting_foldEvents.checked=$settings.foldEvents;
 		setting_autoselect.checked=$settings.autoselect;
 		setting_avplay.checked=$settings.avplay;
