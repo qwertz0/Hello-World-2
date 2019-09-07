@@ -58,11 +58,6 @@ function start() {
 		
 		const openMenu=function() { schedule.classList.add("schedule--menu"); isMenu=true; },
 					closeMenu=function() { schedule.classList.remove("schedule--menu"); isMenu=false; };
-		
-		// todo: dynamische Erzeugung der Elemente
-		const exitMsg=document.createElement("div");
-		exitMsg.className="msg-exit";
-		document.body.appendChild(exitMsg);
 
 	//	var touch=false;
 	//	document.onpointerdown=function(e) {
@@ -73,7 +68,7 @@ function start() {
 	//		}
 	//	}
 		
-	//	let smallMediaMatch=window.matchMedia("(max-width: 600px)");	// todo: abgleichen mit css
+	//	let smallMediaMatch=window.matchMedia("(max-width: 600px)");	// abgleichen mit css
 	//	const switchMenu=function(q){
 	//		closeMenu();
 	//		isHamburger=q.matches;
@@ -251,7 +246,7 @@ function start() {
 			obj.onpointerleave=function(e) { /*if (e.pointerType!=="touch")*/ obj.classList.remove("menu-item--hover"); };
 			obj.onpointerdown=function(e) { obj.touched=e.pointerType==="touch"; }; // todo: siehe "ist das gut???"
 			obj.onclick=function() {
-				if (isMenu) { // && !menu.preventClick
+				if (isMenu) {
 					fnc();
 					if (obj.touched) closeMenu(); // todo: ist das gut???
 				}
@@ -447,20 +442,17 @@ function start() {
 				
 				if ($settings.exoplayer) {
 					const successCallback=function(success){
-									console.log(success); // todo
+									//console.log(success);
 									if (success.eventType==="KEY_EVENT") {
 										if (success.eventAction==="ACTION_DOWN") {
 									    if(success.eventKeycode == 'KEYCODE_BACK'){
 									    	setTimeout(()=>$video.close(),100); // Verzögerung, um "doppelten"/"durchreichen" des Back-Button zu vermeiden
-									    } else if(success.eventKeycode == 'KEYCODE_SPACE' || success.eventKeycode == 'KEYCODE_ENTER') { // todo: ggf. AirMausklick
+									    } else if(success.eventKeycode == 'KEYCODE_SPACE' || success.eventKeycode == 'KEYCODE_ENTER') {
 									    	window.ExoPlayer.showController();
 									    } else if(success.eventKeycode == 'KEYCODE_DPAD_LEFT' || success.eventKeycode == 'KEYCODE_DPAD_DOWN' || success.eventKeycode == 'KEYCODE_PAGE_DOWN') {
 					        			player.previousStream();		    	
 									    } else if(success.eventKeycode == 'KEYCODE_DPAD_RIGHT' || success.eventKeycode == 'KEYCODE_DPAD_UP' || success.eventKeycode == 'KEYCODE_PAGE_UP') {
 					        			player.nextStream();			    	
-									    } else if(success.eventKeycode == 'KEYCODE_X') { // todo: Löschen
-									    	window.ExoPlayer.close();
-												player.error("Testfehler");
 									    }
 									  }
 									} else if(success.eventType == 'TOUCH_EVENT'){
@@ -479,7 +471,7 @@ function start() {
 							    }
 								},
 								errorCallback=function(err) {
-									console.log(err); //todo
+									//console.log(err);
 									window.ExoPlayer.close();
 									player.error(err.errorMessage||"unbekannter Fehler");							
 								},
