@@ -296,7 +296,6 @@ const $schedule=(function() {
 				}
 			}).catch(e=>{
 				if (e!==null) {
-					//todo: Fehler
 					console.log("FEHLER:",e);
 					list0.setAttribute("text",e);
 					list0.classList.remove("schedule-list--loading");
