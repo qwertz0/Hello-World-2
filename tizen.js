@@ -708,10 +708,10 @@ function start() {
 	})();
 
 	// todo: setting_s365pseudo
-	const s365file=localStorage.getItem('s365pseudo')==="true"?"s365_pseudo.js":"s365.js";
+	const s365file=localStorage.getItem('s365pseudo')==="true"?"s365_pseudo.min.js":"s365.min.js";
 					
 	importFiles({
 		js:[$srcUrl+"share.js",$srcUrl+s365file],
-		css:[$srcUrl+"share.css",$srcUrl+"tizen.css"]
+		css:[$srcUrl+"share.css",$srcUrl+"tizen.min.css"]
 	},()=>$device.init());
 }
