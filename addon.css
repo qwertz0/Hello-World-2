@@ -1,11 +1,11 @@
 /* v1.0 */
 
-@font-face { font-family: 'icn'; src: url('/lib/icn.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'icn'; src: url('chrome-extension://codilcgbfhhijngeihdcigmlkincpjkj/lib/icn.woff2') format('woff2'); font-weight: normal; font-style: normal; }
 
-.event--english .event-lang:after { background-image: url("/logos/uk2.svg"); }		
-.event--english.event--online .event-lang:after { background-image: url("/logos/uk.svg"); }
-.event--german .event-lang:before { background-image: url("/logos/de2.svg"); }				
-.event--german.event--online .event-lang:before { background-image: url("/logos/de.svg"); }
+.event--english .event-lang:after { background-image: url("chrome-extension://codilcgbfhhijngeihdcigmlkincpjkj/logos/uk2.svg"); }		
+.event--english.event--online .event-lang:after { background-image: url("chrome-extension://codilcgbfhhijngeihdcigmlkincpjkj/logos/uk.svg"); }
+.event--german .event-lang:before { background-image: url("chrome-extension://codilcgbfhhijngeihdcigmlkincpjkj/logos/de2.svg"); }				
+.event--german.event--online .event-lang:before { background-image: url("chrome-extension://codilcgbfhhijngeihdcigmlkincpjkj/logos/de.svg"); }
 
 .--menuMove .schedule-dimmer { transition:none; display:block; }
 .--menuMove .schedule-menu { transition:none; }
