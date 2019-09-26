@@ -1,4 +1,4 @@
-// v1.0
+// v1.0.1
 
 const $s365=(function() {
 		
@@ -14,33 +14,124 @@ const $s365=(function() {
 		return {
 			get:function(force) {
 				const _nw=nw=Date.now();
-				return new Promise(function (resolve, reject) {
+				return new Promise(function (resolve, reject) {					
 					if (force!==true && xKey!==null) {
 						resolve(xKey);
 					} else {
 						console.log("Laden","http://www.sport365.live/de/home");
 						fetchDoc("http://www.sport365.live/de/home").then((doc)=>{
 							if (_nw===nw) {
-					 			const A=[].map.call(doc.querySelectorAll('script[src]'),x=>x.src).filter(x=>/medianetworkinternational\.com\/js\/[a-f0-9]{32}\.js$/.test(x));
-								(function loop(n) {
-									if (n===-1) {
-										reject("Key nicht gefunden! [E13]");
-									} else {
-										console.log("Laden",A[n]);
-										fetchTxt(A[n]).then(txt=>{
-											if (_nw===nw) {
-												const x=unwise(txt).match(/return\s+["']([a-z0-9]+)["']/);
-												if (x) resolve(xKey=x[1]);
-													else loop(--n);
-											} else reject(null);
-										}).catch(e=>{
-											if (_nw===nw) {
-												console.warn("[208]",e);
-												loop(--n);
-											} else reject(null);
-										}); // fetchTxt (catch)
-									} // else
-								})(A.length-1);
+					 			const A=[].map.call(doc.querySelectorAll('script[src]'),x=>x.src).filter(x=>/medianetworkinternational\.com\/js\/[a-f0-9]{32}\.js$/.test(x)),
+					 						im=doc.querySelector("#captcha img");
+					 			if (im) {
+									(function loop(n) {
+										if (n===-1) {
+											reject("Key nicht gefunden! [E13]");
+										} else {
+											console.log("Laden",A[n]);
+											fetchTxt(A[n]).then(txt=>{
+												if (_nw===nw) {
+													if (txt.indexOf("Crypto")!==-1) {
+														const fnc=(function() {
+															const n=txt.match(/cryptojs.+?([a-z0-9]{20,}).+?cryptojsaesjson/i);
+															if (n) {
+																let idx=txt.indexOf("function "+n[1]);	
+																if (idx!==-1) {
+																	let r=txt.substr(idx);
+																	idx=r.indexOf("break");
+																	if (idx!==-1) return r.substr(0,idx);
+																}
+															}
+															return null;
+														})();
+														if (fnc) {
+															const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0;
+															if (!isNaN(k)) {
+																const p=fnc.match(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["']([a-z0-9]+)["']\s*\)/i),
+																			kk=(p?p[1]:"x")-0;
+																if (!isNaN(kk)) {			
+																	const A=(function() {
+																		const m=txt.match(/var\s+_0x[a-z0-9]+\s*=\s*\[\s*["']([^\]]+)["']/),
+																					M=m?m[1].split(/['",\s]+/):[],
+																					l=M.length;
+																		return l>1 && l>=kk?M:null;
+																	})();
+																	if (A) {
+																		let Q=null;
+																		try {
+																			Q=(function(a,b){
+															        	const bLen=b.length;
+														            let A = [...Array(256).keys()], str = '';
+														            a = atob(a);
+														            for (var i = 0, n = a.length; i < n; i++) str += '%' + ('00' + a.charCodeAt(i).toString(16)).slice(-2);
+														            a = decodeURIComponent(str);
+														            for (var i = 0, x=0, z; i < 256; i++) {
+														              x = (x + A[i] + b.charCodeAt(i % bLen)) % 256;
+														              z = A[i];
+														              A[i] = A[x];
+														              A[x] = z;
+														            }
+														            str='';
+														            for (var x=0, i = 0, y=0, z, n=a.length; i < n; i++) {
+															            x = (x + 1) % 256;
+															            y = (y + A[x]) % 256;
+															            z = A[x];
+															            A[x] = A[y];
+															            A[y] = z;
+															            str += String.fromCharCode(a.charCodeAt(i) ^ A[(A[x] + A[y]) % 256]);
+														            }
+														            return str;				
+																			})(A[(kk+k)%A.length],p[2]);
+																			if (/[^\d\|]/.test(Q)) Q=null;
+																				else Q=Q.split("|").map(x=>parseInt(x));
+																		} catch(e) {
+																			Q=null;	
+																		}
+																		if (Q) {
+																			const cs=fnc.split("case").slice(1);
+																			if (cs.length===Q.length) {
+																				let Qq=[];
+																				Q.forEach(x=>Qq.push(cs[x]))
+																				Qq=Qq.map(x=>{
+																					const m=x.match(/\(\s*(0x[a-f0-9]+)\s*,\s*(0x[a-f0-9]+)\s*,\s*0x1\s*,\s*0x1\s*\)/);
+																					return m?[m[1]-0,m[2]-0]:null;
+																				}).filter(x=>x!==null);
+																				if (Qq.length>0) {
+																					let _return = '', c = document.createElement('canvas'), ctx=c.getContext('2d'), _img=new Image(), d;
+																					_img.onload=function() {
+																						try {
+																							c.width=50; c.height=50;
+																							ctx.drawImage(_img, 0, 0);
+																							d=ctx.getImageData(0, 0, 50, 50).data;
+																							//Qq.forEach(q=>_return = _return + ctx.getImageData(q[0], q[1], 1, 1).data[2].toString());
+																							Qq.forEach(q=>_return = _return + d[4*(50*q[1]+q[0])+2].toString());
+																						} catch(e) {
+																							_return='';
+																						}
+																						if(_return!=="") {
+																							console.log(_return);
+																							resolve(_return);
+																						} else reject("Key nicht gefunden! [E22]");
+																					};
+																					_img.src=im.src;
+																				} else reject("Key nicht gefunden! [E21]");
+																			} else reject("Key nicht gefunden! [E20]");
+																		} else reject("Key nicht gefunden! [E19]");
+																	} else reject("Key nicht gefunden! [E18]");
+																} else reject("Key nicht gefunden! [E17]");
+															} else reject("Key nicht gefunden! [E16]");
+														} else reject("Key nicht gefunden! [E15]");
+													} else loop(--n);
+												} else reject(null);
+											}).catch(e=>{
+												if (_nw===nw) {
+													console.warn("[208]",e);
+													loop(--n);
+												} else reject(null);
+											}); // fetchTxt (catch)
+										} // else
+									})(A.length-1);
+								} else reject("Key nicht gefunden! [E14]");
 							} else reject(null);
 						}).catch((e)=>{
 							console.warn("[209]",e);
@@ -433,30 +524,7 @@ const $s365=(function() {
 			}
 		};
 		return JSON.parse(CryptoJS.AES.decrypt(window.atob(s), k, {format: ll}).toString(CryptoJS.enc.Utf8));
-	} // deCrypt
-
-	function unwise(str) {
-		const _e=eval,
-					getChunks=s=>s.match(/eval\s*\(\s*\(?\s*function\s*\([\s\S]*?\}\s*\((\s*["'][0-9a-z]+["']\s*,?){4}\)\s*\);?/g)||[];
-		eval=(s)=>s;
-		let chunks, ostr=null;
-		while(str!==ostr && (chunks=getChunks(str)).length>0) {
-			ostr=str;
-			chunks.forEach(chunk=>{
-				str=str.split(chunk).join((function() {
-					let r=null;
-					try {
-						r=_e(chunk);
-					} catch(e) {
-						console.log("Fehler beim Entpacken eines WISE-Chunks!");
-					}
-					return r?r:chunk;
-				})())
-			});
-		}
-		eval=_e;
-		return str;	
-	} // unwise	
+	} // deCrypt	
 
 })(); // $s365
 
