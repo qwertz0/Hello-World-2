@@ -1,6 +1,6 @@
 /* v1.0 */
 
-@font-face { font-family: 'icn'; src: url('chrome-extension://__MSG_@@extension_id__/lib/icn.woff2') format('woff2'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'icn'; src: url('chrome-extension://dijmolfkgkehekaecanjkdcnmpfjcdgf/lib/icn.woff2') format('woff2'); font-weight: normal; font-style: normal; }
 
 .event--english .event-lang:after { background-image: url("chrome-extension://__MSG_@@extension_id__/logos/uk2.svg"); }		
 .event--english.event--online .event-lang:after { background-image: url("chrome-extension://__MSG_@@extension_id__/logos/uk.svg"); }
