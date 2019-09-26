@@ -502,7 +502,7 @@ function start() {
 			
 			importFiles({
 				js:JS,
-				css:[$srcUrl+"share.css",$srcUrl+"addon.css"]
+				css:[$srcUrl+"share.min.css",$srcUrl+"addon.min.css"]
 			},()=>$device.init(_settings));
 
 		}
