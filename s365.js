@@ -1,4 +1,4 @@
-// v1.0.1
+// v1.0.2
 
 const $s365=(function() {
 		
@@ -33,7 +33,7 @@ const $s365=(function() {
 												if (_nw===nw) {
 													if (txt.indexOf("Crypto")!==-1) {
 														const fnc=(function() {
-															const n=txt.match(/cryptojs.+?([a-z0-9]{20,}).+?cryptojsaesjson/i);
+															const n=txt.match(/cryptojs.{1,300}?([a-z0-9]{20,}).+?cryptojsaesjson/i);
 															if (n) {
 																let idx=txt.indexOf("function "+n[1]);	
 																if (idx!==-1) {
