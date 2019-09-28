@@ -1,4 +1,4 @@
-// v1.0
+// v1.0.1
 
 var $device=null;
 
@@ -424,7 +424,6 @@ function start() {
 				document.body.addEventListener('keydown', function(e) {
 					switch (e.keyCode) {
 						case 34: // Bild runter
-						case 8: // Backspace
 							if ($video.isOpen()) $video.getPlayer().previousStream();
 							break;
 						case 33: // Bild rauf
@@ -432,11 +431,14 @@ function start() {
 						//case 32:
 							if ($video.isOpen()) $video.getPlayer().nextStream();
 							break;
+						case 8: // Backspace
 						case 27: // Esc
 						case 46: // Entf
 								if ($video.isOpen()) {
 									const _player=$video.getPlayer();
-									if (_player.videoBar.isOpen()) {
+									if (e.keyCode===8) {
+										_player.previousStream();
+									} else if (_player.videoBar.isOpen()) {
 										_player.videoBar.close();
 									} else {
 										$video.close();
