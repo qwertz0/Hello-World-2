@@ -1,4 +1,4 @@
-// v1.0.3
+// v1.0.4
 
 const $s365=(function() {
 		
@@ -23,7 +23,8 @@ const $s365=(function() {
 							if (_nw===nw) {
 					 			const A=[].map.call(doc.querySelectorAll('script[src]'),x=>x.src).filter(x=>/medianetworkinternational\.com\/js\/[a-f0-9]{32}\.js$/.test(x)),
 					 						im=doc.querySelector("#captcha img");
-					 			if (im) {
+					 			console.log(im.src);
+					 			if (im && im.src.length>30) {
 									(function loop(n) {
 										if (n===-1) {
 											reject("Key nicht gefunden! [E13]");
