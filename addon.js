@@ -1,4 +1,5 @@
 // v1.0.1
+
 var $device=null;
 
 const $settings={
@@ -503,7 +504,7 @@ function start() {
 			
 			importFiles({
 				js:JS,
-				css:[$srcUrl+"share.min.css",$srcUrl+"addon.min.css"]
+				css:[$srcUrl+"share.css",$srcUrl+"addon.css"]
 			},()=>$device.init(_settings));
 
 		}
