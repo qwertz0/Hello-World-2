@@ -1,5 +1,4 @@
 // v1.0.1
-
 var $device=null;
 
 const $settings={
