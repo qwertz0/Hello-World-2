@@ -609,12 +609,12 @@ function start() {
 		if (localStorage.getItem('exoplayer')==="false") JS.push($deviceUrl+"lib/hls.light.min.js");
 			
 		// todo: setting_s365pseudo
-		if (localStorage.getItem('s365pseudo')==="true") JS.push($srcUrl+"s365_pseudo.min.js");
-			else JS.push($srcUrl+"s365.min.js");
+		if (localStorage.getItem('s365pseudo')==="true") JS.push($srcUrl+"s365_pseudo.js");
+			else JS.push($srcUrl+"s365.js");
 		
 		importFiles({
 			js:JS,
-			css:[$srcUrl+"share.min.css",$srcUrl+"android.min.css"]
+			css:[$srcUrl+"share.css",$srcUrl+"android.css"]
 		},()=>$device.init());
 		
 	})();
