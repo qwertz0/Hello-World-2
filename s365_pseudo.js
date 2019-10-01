@@ -1,5 +1,4 @@
 // v1.0
-
 const $s365=(function() {
 	
 	const teamFilter=["monchengladbach",null,"dortmund","bayern","fortuna","schalke","fckoln","paderborn","leverkusen","leipzig","frankfurt","freiburg","bremen","hertha","union","hoffenheim","wolfsburg","mainz","augsburg",null,null,"hamburg","stuttgart","stpauli","hannover","bochum","bielefeld","nurnberg","karlsruhe","erzgebirge","darmstadt","dresden","greuther","heidenheim","holstein","osnabruck","regensburg","sandhausen","wiesbaden",null,null,null,null,null,"liverpool","barcelona","saintgermain","realmadrid","manchestercity","juventus"];
