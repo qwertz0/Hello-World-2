@@ -1,4 +1,4 @@
-// v1.0.4
+// v1.0.5
 
 const $s365=(function() {
 		
@@ -48,7 +48,7 @@ const $s365=(function() {
 														if (fnc) {
 															const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0;
 															if (!isNaN(k)) {
-																const p=fnc.match(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["']([a-z0-9]+)["']\s*\)/i),
+																const p=fnc.match(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/i),
 																			kk=(p?p[1]:"x")-0;
 																if (!isNaN(kk)) {			
 																	const A=(function() {
