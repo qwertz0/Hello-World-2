@@ -1,4 +1,5 @@
 // v1.0
+
 const $schedule=(function() {
 	
 	let _events=[], _list=list0;
