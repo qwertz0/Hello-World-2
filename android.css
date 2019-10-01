@@ -1,4 +1,5 @@
 /* v2.0 */
+
 @font-face { font-family: 'icn'; src: url('file:///android_asset/www/lib/icn.woff2') format('woff2'); font-weight: normal; font-style: normal; }
 
 .event--english .event-lang:after { background-image: url("file:///android_asset/www/logos/uk2.svg"); }		
