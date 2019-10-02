@@ -1,4 +1,4 @@
-// v1.0.5
+// v1.0.6
 const $s365=(function() {
 		
 	const teamFilter=
@@ -201,12 +201,12 @@ const $s365=(function() {
 														const n=teamFilter.length;
 														for (let i=0, t=teams[0].replace(/\s|-/g,""); i<n; i++) {if (t.indexOf(teamFilter[i])!==-1) {e.home=i; break;}}
 														for (let i=0, t=teams[1].replace(/\s|-/g,""); i<n; i++) {if (t.indexOf(teamFilter[i])!==-1) {e.away=i; break;}}
-														if (e.home===null) e.home=[19,38,41,49,51,null][e.cat];
-															else if (e.away===null) e.away=[19,38,41,49,51,null][e.cat];
+														if (e.home===null) e.home=[19,39,41,50,51,null][e.cat];
+															else if (e.away===null) e.away=[19,39,41,50,51,null][e.cat];
 													} else if (l===1 && (teams[0].indexOf("konferenz")!==-1 || teams[0].indexOf("simulcast")!==-1)) {
 														e.home=[1,20,40,42,43,null][e.cat];
 													} else {
-														e.home=[19,38,41,49,51,null][e.cat];
+														e.home=[19,39,41,50,51,null][e.cat];
 													}
 												}													
 												return e;
