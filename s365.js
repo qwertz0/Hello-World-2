@@ -1,4 +1,4 @@
-// v1.1.1
+// v1.1.2
 
 const $s365=(function() {
 		
@@ -377,7 +377,7 @@ const $s365=(function() {
 													.then(doc=>{
 														if (nw===_nw) {
 															const Z=[].filter.call(doc.querySelectorAll('script:not([src])'),x=>x.textContent.includes("vjs_options")).map(x=>x.textContent.match(/["']([^"']+)["']/g)).reduce((a,b)=>a.concat(b),[]).sort((a,b)=>a.length<b.length),
-																		banner=([].filter.call(doc.querySelectorAll("script[src]"),x=>x.src.includes("tags2.adshell.net/p"))[0]||{}).src||null;
+																		banner=([].filter.call(doc.querySelectorAll("script[src]"),x=>x.src.includes("clk.sportstream.live/p"))[0]||{}).src||null; // v1.1.1: "tags2.adshell.net/p"
 															let t=null;
 															for (let i=0,z; z=Z[i]; i++) {
 																try { t=deCrypt(z.slice(1,-1),xKey); } catch (e) { t=null; }
