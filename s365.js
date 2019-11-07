@@ -1,4 +1,4 @@
-// v1.1.2
+// v1.1.2a
 
 const $s365=(function() {
 		
@@ -32,7 +32,7 @@ const $s365=(function() {
 											console.log("Laden",A[n]);
 											fetchTxt(A[n]).then(txt=>{
 												if (_nw===nw) {
-													if (txt.indexOf("new Image")!==-1) {
+													if (txt.indexOf("(img,0x0,0x0)")!==-1) { // new Image
 														fnc=(txt.match(/function\s+[a-z0-9]{43}\(_0x[a-f0-9]+\).+?break;/)||[])[0]||null;
 														if (fnc) {
 															const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0;
