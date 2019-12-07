@@ -1,4 +1,4 @@
-// v1.1.3
+// v1.1.4
 
 const $s365=(function() {
 		
@@ -14,7 +14,7 @@ const $s365=(function() {
 		return {
 			get:function(force) {
 				const _nw=nw=Date.now();
-				return new Promise(function (resolve, reject) {					
+				return new Promise(function (resolve, reject) {	
 					if (force!==true && xKey!==null) {
 						resolve(xKey);
 					} else {
@@ -23,7 +23,7 @@ const $s365=(function() {
 							if (_nw===nw) {
 					 			const A=[].map.call(doc.querySelectorAll('script[src]'),x=>x.src).filter(x=>/medianetworkinternational\.com\/js\/[a-f0-9]{32}\.js$/.test(x)),
 					 						im=doc.querySelector("#captcha img");
-					 			console.log(im.src);
+					 			//console.log(im.src);
 					 			if (im && im.src.length>30) {
 									(function loop(n) {
 										if (n===-1) {
@@ -32,11 +32,15 @@ const $s365=(function() {
 											console.log("Laden",A[n]);
 											fetchTxt(A[n]).then(txt=>{
 												if (_nw===nw) {
-													if (txt.indexOf("'iv'")!==-1) { // new Image
-														fnc=(txt.match(/function\s+[a-z0-9]{43}\(_0x[a-f0-9]+\).+?break;/)||[])[0]||null;
+													if (txt.indexOf("'iv'")!==-1) {
+														const fnc=(function() {
+															const q=[...txt.matchAll(/function\s+[a-z0-9]{43}\(_0x[a-f0-9]+\)(?=.+break;)/g)];
+															return q.length>0?txt.substr(q[q.length-1].index).match(/.+?break/)[0]:null;
+														})();
 														if (fnc) {
-															const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0;
-															if (!isNaN(k)) {
+															const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0,
+																		ivName=(fnc.match(/'iv'\s*:\s*(_0x[a-f0-9]+)/)||[])[1]||null;
+															if (ivName && !isNaN(k)) {
 																const p=fnc.match(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/i),
 																			kk=(p?p[1]:"x")-0;
 																if (!isNaN(kk)) {			
@@ -81,31 +85,31 @@ const $s365=(function() {
 																			const cs=fnc.split("case").slice(1);
 																			if (cs.length===Q.length) {
 																				let Qq=[];
-																				Q.forEach(x=>Qq.push(cs[x]))
+																				Q.forEach(x=>Qq.push(cs[x]));
 																				Qq=Qq.map(x=>{
-																					const m=x.match(/\(\s*(0x[a-f0-9]+)\s*,\s*(0x[a-f0-9]+)\s*,\s*0x1\s*,\s*0x1\s*\).+?\[0x(1|2)\]/);
-																					return m?[m[1]-0,m[2]-0,m[3]-0]:null;
+																					const m=x.match(/(_0x[a-f0-9]+)\s*=.+?(\s*0x[a-f0-9]+)\s*,\s*(0x[a-f0-9]+)\s*,\s*0x1\s*,\s*0x1\s*\).+?\[0x(1|2)\]/);
+																					return m?[ivName===m[1],m[2]-0,m[3]-0,m[4]-0]:null;
 																				}).filter(x=>x!==null);
 																				if (Qq.length>0) {
 																					let _k='',_iv='', c = document.createElement('canvas'), ctx=c.getContext('2d'), _img=new Image(), d;
 																					_img.onload=function() {
 																						try {
-																							c.width=50; c.height=50;
+																							//c.width=40; c.height=40; // <-- oder aus Script extrahieren
+																							c.width=this.naturalWidth;
+																							c.height=this.naturalHeight;
 																							ctx.drawImage(_img, 0, 0);
-																							d=ctx.getImageData(0, 0, 50, 50).data;
+																							d=ctx.getImageData(0, 0, c.width, c.height).data;
 																							Qq.forEach(q=>{
-																								//if (q[2]===1) _iv = _iv + ctx.getImageData(q[0], q[1], 1, 1).data[1].toString();
-																								if (q[2]===1) _iv = _iv + d[4*(50*q[1]+q[0])+1].toString();
-																									//else _k = _k + ctx.getImageData(q[0], q[1], 1, 1).data[2].toString();
-																									else _k = _k + d[4*(50*q[1]+q[0])+2].toString();
+																								if (q[0])	_iv +=d[4*(c.width*q[2]+q[1])+q[3]].toString();
+																									else _k+=d[4*(c.width*q[2]+q[1])+q[3]].toString();
 																							});
 																						} catch(e) {
 																							_k='';
 																							_iv='';
 																						}
 																						if(_k!=="") {
-																							console.log(_k,_iv);
-																							resolve({k:_k,iv:_iv});
+																							console.log("K",_k,"iv",_iv);
+																							resolve(xKey={k:_k,iv:_iv});
 																						} else reject("Key nicht gefunden! [E22]");
 																					};
 																					_img.src=im.src;
@@ -515,7 +519,7 @@ const $s365=(function() {
 			return String.fromCharCode.apply(String, bytes);
 		},
 		byteBuffer = new forge.util.ByteBuffer(hex2bin(s),"raw");
-		let r = forge.cipher.createDecipher("AES-CBC", k.k);
+		let r = forge.cipher.createDecipher("DES-CBC", k.k);
 		r.start({'iv': k.iv });
 		r.update(byteBuffer);
 		r.finish();
