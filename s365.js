@@ -1,4 +1,4 @@
-// v1.1.4
+// v1.1.5
 
 const $s365=(function() {
 		
@@ -100,8 +100,8 @@ const $s365=(function() {
 																							ctx.drawImage(_img, 0, 0);
 																							d=ctx.getImageData(0, 0, c.width, c.height).data;
 																							Qq.forEach(q=>{
-																								if (q[0])	_iv +=d[4*(c.width*q[2]+q[1])+q[3]].toString();
-																									else _k+=d[4*(c.width*q[2]+q[1])+q[3]].toString();
+																								if (q[0])	_iv +=String.fromCharCode(d[4*(c.width*q[2]+q[1])+q[3]]);
+																									else _k+=String.fromCharCode(d[4*(c.width*q[2]+q[1])+q[3]]);
 																							});
 																						} catch(e) {
 																							_k='';
