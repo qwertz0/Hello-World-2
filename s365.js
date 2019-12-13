@@ -1,5 +1,4 @@
-// v1.1.5
-
+// v1.1.6
 const $s365=(function() {
 		
 	const teamFilter=
@@ -38,63 +37,71 @@ const $s365=(function() {
 															return q.length>0?txt.substr(q[q.length-1].index).match(/.+?break/)[0]:null;
 														})();
 														if (fnc) {
-															const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0,
-																		ivName=(fnc.match(/'iv'\s*:\s*(_0x[a-f0-9]+)/)||[])[1]||null;
-															if (ivName && !isNaN(k)) {
-																const p=fnc.match(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/i),
-																			kk=(p?p[1]:"x")-0;
-																if (!isNaN(kk)) {			
-																	const A=(function() {
-																		const m=txt.match(/var\s+_0x[a-z0-9]+\s*=\s*\[\s*["']([^\]]+)["']/),
-																					M=m?m[1].split(/['",\s]+/):[],
-																					l=M.length;
-																		return l>1 && l>=kk?M:null;
-																	})();
-																	if (A) {
-																		let Q=null;
-																		try {
-																			Q=(function(a,b){
+															const ivName=(fnc.match(/'iv'\s*:\s*(_0x[a-f0-9]+)/)||[])[1]||null; // Name der iv-Variable
+															if (ivName) {
+																const decodedStringArray=(function() {
+																	const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0; // Zahl der Umsortierungen des Array
+																	if (!isNaN(k)) {
+																		const aStr=txt.match(/var\s+_0x[a-z0-9]+\s*=\s*\[\s*["']([^\]]+)["']/);
+																		if (aStr) {
+																			const A=aStr[1].split(/['",\s]+/), // jScrambler-String-Array (verschlüsselt!)
+																						lA=A.length;
+																			if (lA>1) return function(n,b) { // n = Nr , b = Key
 															        	const bLen=b.length;
-														            let A = [...Array(256).keys()], str = '';
-														            a = atob(a);
-														            for (var i = 0, n = a.length; i < n; i++) str += '%' + ('00' + a.charCodeAt(i).toString(16)).slice(-2);
-														            a = decodeURIComponent(str);
-														            for (var i = 0, x=0, z; i < 256; i++) {
-														              x = (x + A[i] + b.charCodeAt(i % bLen)) % 256;
-														              z = A[i];
-														              A[i] = A[x];
-														              A[x] = z;
-														            }
-														            str='';
-														            for (var x=0, i = 0, y=0, z, n=a.length; i < n; i++) {
-															            x = (x + 1) % 256;
-															            y = (y + A[x]) % 256;
-															            z = A[x];
-															            A[x] = A[y];
-															            A[y] = z;
-															            str += String.fromCharCode(a.charCodeAt(i) ^ A[(A[x] + A[y]) % 256]);
-														            }
-														            return str;				
-																			})(A[(kk+k)%A.length],p[2]);
-																			if (/[^\d\|]/.test(Q)) Q=null;
-																				else Q=Q.split("|").map(x=>parseInt(x));
-																		} catch(e) {
-																			Q=null;	
+														            let X = [...Array(256).keys()], str = '', a=A[(n+k)%lA];
+														            try {
+															            a = atob(a);
+															            for (var i = 0, n = a.length; i < n; i++) str += '%' + ('00' + a.charCodeAt(i).toString(16)).slice(-2);
+															            a = decodeURIComponent(str);
+															            for (var i = 0, x=0, z; i < 256; i++) {
+															              x = (x + X[i] + b.charCodeAt(i % bLen)) % 256;
+															              z = X[i];
+															              X[i] = X[x];
+															              X[x] = z;
+															            }
+															            str='';
+															            for (var x=0, i = 0, y=0, z, n=a.length; i < n; i++) {
+																            x = (x + 1) % 256;
+																            y = (y + X[x]) % 256;
+																            z = X[x];
+																            X[x] = X[y];
+																            X[y] = z;
+																            str += String.fromCharCode(a.charCodeAt(i) ^ X[(X[x] + X[y]) % 256]);
+															            }
+															          } catch (e) {
+															          	str=null;
+															          }
+														            return str;
+														          };
 																		}
-																		if (Q) {
-																			const cs=fnc.split("case").slice(1);
+																	}
+																	return null;
+																})(); // decodedStringArray
+			
+																if (decodedStringArray) {
+																	const strings=[...fnc.matchAll(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/g)].map(x=>decodedStringArray(x[1]-0,x[2])),
+																				cipher=strings.find(x=>/^(A|3?D)ES-/.test(x));
+																	if (cipher) {
+																		const Q=(strings.find(x=>/^(\d+\|)+\d+$/.test(x))||"").split("|").map(x=>parseInt(x)); //[1,2,0,..] Reihenfolgen-Array der jScrambler-while-Schleife
+																		if (!isNaN(Q[0])) {
+																			const cs=fnc.split("case").slice(1); // Elemente der jScrambler-while-Schleife
 																			if (cs.length===Q.length) {
-																				let Qq=[];
-																				Q.forEach(x=>Qq.push(cs[x]));
-																				Qq=Qq.map(x=>{
-																					const m=x.match(/(_0x[a-f0-9]+)\s*=.+?(\s*0x[a-f0-9]+)\s*,\s*(0x[a-f0-9]+)\s*,\s*0x1\s*,\s*0x1\s*\).+?\[0x(1|2)\]/);
-																					return m?[ivName===m[1],m[2]-0,m[3]-0,m[4]-0]:null;
-																				}).filter(x=>x!==null);
-																				if (Qq.length>0) {
+																				let Qq=[];//, wh=-1;
+																				
+																				Q.forEach(x=>{
+																					const c=cs[x];
+																					let m=c.match(/(_0x[a-f0-9]+)\s*=.+?(\s*0x[a-f0-9]+)\s*,\s*(0x[a-f0-9]+)\s*,\s*0x1\s*,\s*0x1\s*\).+?\[0x(1|2)\]/);
+																					if (m) Qq.push([ivName===m[1],m[2]-0,m[3]-0,m[4]-0]);
+																					//else {
+																					//	m=c.match(/\],["']?(0x[a-f\d]+|\d+)['"]?\);continue;$/);
+																					//	if (m) wh=m[1]-0;
+																					//}
+																				});
+																				if (Qq.length>0 /* && wh!==-1 */) {
 																					let _k='',_iv='', c = document.createElement('canvas'), ctx=c.getContext('2d'), _img=new Image(), d;
 																					_img.onload=function() {
 																						try {
-																							//c.width=40; c.height=40; // <-- oder aus Script extrahieren
+																							//c.width=wh; c.height=wh;
 																							c.width=this.naturalWidth;
 																							c.height=this.naturalHeight;
 																							ctx.drawImage(_img, 0, 0);
@@ -108,18 +115,18 @@ const $s365=(function() {
 																							_iv='';
 																						}
 																						if(_k!=="") {
-																							console.log("K",_k,"iv",_iv);
-																							resolve(xKey={k:_k,iv:_iv});
-																						} else reject("Key nicht gefunden! [E22]");
+																							console.log("K",_k,"iv",_iv,"cipher",cipher);
+																							resolve(xKey={k:_k,iv:_iv,cipher:cipher});
+																						} else reject("Key nicht gefunden! [E22]"); // Schlüssel oder iv
 																					};
 																					_img.src=im.src;
-																				} else reject("Key nicht gefunden! [E21]");
-																			} else reject("Key nicht gefunden! [E20]");
-																		} else reject("Key nicht gefunden! [E19]");
-																	} else reject("Key nicht gefunden! [E18]");
-																} else reject("Key nicht gefunden! [E17]");
-															} else reject("Key nicht gefunden! [E16]");
-														} else reject("Key nicht gefunden! [E15]");
+																				} else reject("Key nicht gefunden! [E21]"); // keine "Pixel-Koordinaten"
+																			} else reject("Key nicht gefunden! [E20]"); // Anzahl der "case"s !== Anzahl im Reihenfolgen-Array
+																		} else reject("Key nicht gefunden! [E19]"); // [1,2,0,..] Reihenfolgen-Array der jScrambler-while-Schleife
+																	} else reject("Key nicht gefunden! [E18]"); // cipher
+																} else reject("Key nicht gefunden! [E17]"); // String-Array (i.d.R. am Anfang) oder Anzahl der Umsortierungen
+															} else reject("Key nicht gefunden! [E16]"); // iv-Variable bzw. Name der iv-Variable
+														} else reject("Key nicht gefunden! [E15]"); // Funktion
 													} else loop(--n);
 												} else reject(null);
 											}).catch(e=>{
@@ -519,7 +526,7 @@ const $s365=(function() {
 			return String.fromCharCode.apply(String, bytes);
 		},
 		byteBuffer = new forge.util.ByteBuffer(hex2bin(s),"raw");
-		let r = forge.cipher.createDecipher("DES-CBC", k.k);
+		let r = forge.cipher.createDecipher(k.cipher, k.k);
 		r.start({'iv': k.iv });
 		r.update(byteBuffer);
 		r.finish();
