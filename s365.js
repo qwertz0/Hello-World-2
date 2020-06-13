@@ -1,4 +1,4 @@
-// v1.1.6
+// v1.2
 const $s365=(function() {
 		
 	const teamFilter=
@@ -7,6 +7,7 @@ const $s365=(function() {
 		/* 20 - 39 */ null/*2.BL Konferenz*/,"hamburg","stuttgart","stpauli","hannover","bochum","bielefeld","nurnberg","karlsruhe","erzgebirge","darmstadt","dresden","greuther","heidenheim","holstein","osnabruck","regensburg","sandhausen","wiesbaden",null/*2.BL*/,
 		/* 40 - .. */ null/*DFB Pokal Konferenz*/,null/*DFB Pokal*/,null/*CL Konferenz*/,null/*EL Konferenz*/,"liverpool","barcelona","saintgermain","realmadrid","manchestercity","juventus"  /* , CL , EL */
 		];
+
 	
 	const XKey=(function() {
 		let xKey=null, nw=null;
@@ -20,10 +21,52 @@ const $s365=(function() {
 						console.log("Laden","http://www.sport365.live/de/home");
 						fetchDoc("http://www.sport365.live/de/home").then((doc)=>{
 							if (_nw===nw) {
-					 			const A=[].map.call(doc.querySelectorAll('script[src]'),x=>x.src).filter(x=>/medianetworkinternational\.com\/js\/[a-f0-9]{32}\.js$/.test(x)),
+					 			const A=[].map.call(doc.querySelectorAll('script[src]'),x=>x.src).filter(x=>/sport365\.cloud\/js\/[a-f0-9]{32}\.js/.test(x)),
 					 						im=doc.querySelector("#captcha img");
 					 			//console.log(im.src);
 					 			if (im && im.src.length>30) {
+					 				
+					 				let xkey={};
+					 				
+					 				const arrayDecoder=function(txt) {
+										const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0; // Zahl der Umsortierungen des Array
+										if (!isNaN(k)) {
+											const aStr=txt.match(/var\s+_0x[a-z0-9]+\s*=\s*\[\s*["']([^\]]+)["']/);
+											if (aStr) {
+												const A=aStr[1].split(/['",\s]+/), // jScrambler-String-Array (verschlüsselt!)
+															lA=A.length;
+												if (lA>1) return function(n,b) { // n = Nr , b = Key
+								        	const bLen=b.length;
+							            let X = [...Array(256).keys()], str = '', a=A[(n+k)%lA];
+							            try {
+								            a = atob(a);
+								            for (var i = 0, n = a.length; i < n; i++) str += '%' + ('00' + a.charCodeAt(i).toString(16)).slice(-2);
+								            a = decodeURIComponent(str);
+								            for (var i = 0, x=0, z; i < 256; i++) {
+								              x = (x + X[i] + b.charCodeAt(i % bLen)) % 256;
+								              z = X[i];
+								              X[i] = X[x];
+								              X[x] = z;
+								            }
+								            str='';
+								            for (var x=0, i = 0, y=0, z, n=a.length; i < n; i++) {
+									            x = (x + 1) % 256;
+									            y = (y + X[x]) % 256;
+									            z = X[x];
+									            X[x] = X[y];
+									            X[y] = z;
+									            str += String.fromCharCode(a.charCodeAt(i) ^ X[(X[x] + X[y]) % 256]);
+								            }
+								          } catch (e) {
+								          	str=null;
+								          }
+							            return str;
+							          };
+											}
+										}
+										return null;
+									}; // arrayDecoder
+
 									(function loop(n) {
 										if (n===-1) {
 											reject("Key nicht gefunden! [E13]");
@@ -33,51 +76,28 @@ const $s365=(function() {
 												if (_nw===nw) {
 													if (txt.indexOf("'iv'")!==-1) {
 														const fnc=(function() {
-															const q=[...txt.matchAll(/function\s+[a-z0-9]{43}\(_0x[a-f0-9]+\)(?=.+break;)/g)];
-															return q.length>0?txt.substr(q[q.length-1].index).match(/.+?break/)[0]:null;
+															const q=[...txt.matchAll(/function\s+[a-z0-9]{43}\(_0x[a-f0-9]+\)\s*\{(?=.+'iv')/g)];
+															if (q.length>0) {
+																const a=q[q.length-1].index+q[q.length-1][0].length;
+																for (let i=a, x , b=0, c=false; x=txt[i]; i++) {
+																	if (c) {
+																		if (x==="'") c=false;
+																	} else if (x==="{") {
+																		b++;
+																	} else if (x==="}") {
+																		if (b===0) return txt.substring(a,i);
+																		b--;
+																	} else if (x==="'") {
+																		c=true;	
+																	}
+																}
+															}
+															return null;
 														})();
 														if (fnc) {
-															const ivName=(fnc.match(/'iv'\s*:\s*(_0x[a-f0-9]+)/)||[])[1]||null; // Name der iv-Variable
+															const ivName=(fnc.match(/'iv'\s*(:|\]\s*=)\s*(_0x[a-f0-9]+)/)||[])[2]||null; // Name der iv-Variable
 															if (ivName) {
-																const decodedStringArray=(function() {
-																	const k=((txt.match(/}\(_0x[a-z0-9]+,\s*(0x[a-f0-9]+)\)\);/)||[])[1]||"x")-0; // Zahl der Umsortierungen des Array
-																	if (!isNaN(k)) {
-																		const aStr=txt.match(/var\s+_0x[a-z0-9]+\s*=\s*\[\s*["']([^\]]+)["']/);
-																		if (aStr) {
-																			const A=aStr[1].split(/['",\s]+/), // jScrambler-String-Array (verschlüsselt!)
-																						lA=A.length;
-																			if (lA>1) return function(n,b) { // n = Nr , b = Key
-															        	const bLen=b.length;
-														            let X = [...Array(256).keys()], str = '', a=A[(n+k)%lA];
-														            try {
-															            a = atob(a);
-															            for (var i = 0, n = a.length; i < n; i++) str += '%' + ('00' + a.charCodeAt(i).toString(16)).slice(-2);
-															            a = decodeURIComponent(str);
-															            for (var i = 0, x=0, z; i < 256; i++) {
-															              x = (x + X[i] + b.charCodeAt(i % bLen)) % 256;
-															              z = X[i];
-															              X[i] = X[x];
-															              X[x] = z;
-															            }
-															            str='';
-															            for (var x=0, i = 0, y=0, z, n=a.length; i < n; i++) {
-																            x = (x + 1) % 256;
-																            y = (y + X[x]) % 256;
-																            z = X[x];
-																            X[x] = X[y];
-																            X[y] = z;
-																            str += String.fromCharCode(a.charCodeAt(i) ^ X[(X[x] + X[y]) % 256]);
-															            }
-															          } catch (e) {
-															          	str=null;
-															          }
-														            return str;
-														          };
-																		}
-																	}
-																	return null;
-																})(); // decodedStringArray
-			
+																const decodedStringArray=arrayDecoder(txt); // decodedStringArray
 																if (decodedStringArray) {
 																	const strings=[...fnc.matchAll(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/g)].map(x=>decodedStringArray(x[1]-0,x[2])),
 																				cipher=strings.find(x=>/^(A|3?D)ES-/.test(x));
@@ -116,7 +136,8 @@ const $s365=(function() {
 																						}
 																						if(_k!=="") {
 																							console.log("K",_k,"iv",_iv,"cipher",cipher);
-																							resolve(xKey={k:_k,iv:_iv,cipher:cipher});
+																							Object.assign(xkey,{k:_k,iv:_iv,cipher:cipher});
+																							if (xkey.xset) resolve(xKey=xkey); else loop(--n);
 																						} else reject("Key nicht gefunden! [E22]"); // Schlüssel oder iv
 																					};
 																					_img.src=im.src;
@@ -127,6 +148,21 @@ const $s365=(function() {
 																} else reject("Key nicht gefunden! [E17]"); // String-Array (i.d.R. am Anfang) oder Anzahl der Umsortierungen
 															} else reject("Key nicht gefunden! [E16]"); // iv-Variable bzw. Name der iv-Variable
 														} else reject("Key nicht gefunden! [E15]"); // Funktion
+													} else if (txt.indexOf("xset=")!==-1 && txt.indexOf("hset=")!==-1) {
+														
+														 // vvv TODO: evtl. stabiler machen vvv
+														
+														let _x=txt.match(/xset=[^;]+\('(.+?)','(.+?)'\)\);/), _h=txt.match(/hset=[^;]+\('(.+?)','(.+?)'\)\);/);
+														if (_x&&_h) {
+															const decodedStringArray=arrayDecoder(txt); // decodedStringArray
+															_x=decodedStringArray(_x[1]-0,_x[2]);
+															_h=decodedStringArray(_h[1]-0,_h[2]);
+															if (typeof _x==='string' && _x.length>0 && typeof _h==='string' && _h.length>0) {
+																console.log("hset",_h,"xset",_x);
+																Object.assign(xkey,{hset:Array.from(_h),xset:Array.from(_x)});
+																if (xkey.h) resolve(xKey=xkey); else loop(--n);
+															} else reject("Key nicht gefunden! [E001]");
+														} else reject("Key nicht gefunden! [E002]");
 													} else loop(--n);
 												} else reject(null);
 											}).catch(e=>{
@@ -336,7 +372,7 @@ const $s365=(function() {
 		}; // return function
 	})(); // getEvents
 
-	const getLinks=function(url,callback,err) {
+	const getLinks=function(url,callback,err) {		
 		const _getLinks=(resolve,reject)=>{
 			XKey.get().then(xKey=>{
 				console.log("Aufrufen [2]","http://www.sport365.live"+url);
@@ -345,7 +381,7 @@ const $s365=(function() {
 					for (let i=0, spns=doc.querySelectorAll('span#span_link_links'), spn, x; spn=spns[i]; i++) {
 						x=spn.getAttribute("onclick").match(/['"][^"']+["']/);
 						try {
-							 Z.push(deCrypt(x[0].slice(1,-1),xKey));
+							 Z.push(deCrypt(x[0].slice(1,-1),xKey,true));
 						} catch(e) {
 							console.log("Fehler Decrypt",e);
 							XKey.clear();
@@ -353,6 +389,7 @@ const $s365=(function() {
 							return;
 						}					
 					}
+					console.log("OK",Z);
 					if (Z.length>0) resolve(Z); else reject("Nichts gefunden!");			
 				}).catch(e=>reject(e));
 			}).catch(e=>reject(e)); //XKey.get
@@ -387,13 +424,16 @@ const $s365=(function() {
 												fetchDoc(postUrl,{method: 'POST',headers: {'Content-Type': 'application/x-www-form-urlencoded'},body: postData})
 													.then(doc=>{
 														if (nw===_nw) {
+															console.log(doc);
+															debugger
 															const Z=[].filter.call(doc.querySelectorAll('script:not([src])'),x=>x.textContent.includes("vjs_options")).map(x=>x.textContent.match(/["']([^"']+)["']/g)).reduce((a,b)=>a.concat(b),[]).sort((a,b)=>a.length<b.length),
 																		banner=([].filter.call(doc.querySelectorAll("script[src]"),x=>x.src.includes("clk.sportstream.live/p"))[0]||{}).src||null; // v1.1.1: "tags2.adshell.net/p"
 															let t=null;
 															for (let i=0,z; z=Z[i]; i++) {
-																try { t=deCrypt(z.slice(1,-1),xKey); } catch (e) { t=null; }
+																try { t=deCrypt(z.slice(1,-1),xKey,true); } catch (e) { t=null; }
 																if (t!==null && /\/(i$|index\.m3u8?)/.test(t)) break; // TODO: evtl. stabiler machen
 															} // for
+															console.log("URL",t);
 															if (t) resolve({url:t,banner:banner}); else reject("Nichts gefunden [E5]");
 														} else reject(null);
 													}).catch(e=>reject(nw===_nw?e:null));
@@ -518,14 +558,22 @@ const $s365=(function() {
 		return fetchTxt(url,o).then(txt=>new DOMParser().parseFromString(txt, "text/html"));
 	} // fetchDoc
 
-	function deCrypt(s,k) {
+	function deCrypt(s,k,x2h) {
 		const hex2bin=function(hex) {
 			let bytes = [], str;
 			for(let i=0; i< hex.length-1; i+=2)
 			    bytes.push(parseInt(hex.substr(i, 2), 16));
 			return String.fromCharCode.apply(String, bytes);
 		},
-		byteBuffer = new forge.util.ByteBuffer(hex2bin(s),"raw");
+		xset2hset=function(s) {
+			let S="";
+			for (let i=0, n=s.length; i<n; i++) {
+				z=k.xset.indexOf(s[i]);
+				if (z!==-1) S+=k.hset[z]; else S+=s[i];
+			}
+			return S;
+		},
+		byteBuffer = new forge.util.ByteBuffer(hex2bin(x2h?xset2hset(s):s),"raw");
 		let r = forge.cipher.createDecipher(k.cipher, k.k);
 		r.start({'iv': k.iv });
 		r.update(byteBuffer);
