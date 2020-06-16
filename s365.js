@@ -1,4 +1,4 @@
-// v1.2
+// v1.2.1
 const $s365=(function() {
 		
 	const teamFilter=
@@ -76,9 +76,9 @@ const $s365=(function() {
 												if (_nw===nw) {
 													if (txt.indexOf("'iv'")!==-1) {
 														const fnc=(function() {
-															const q=[...txt.matchAll(/function\s+[a-z0-9]{43}\(_0x[a-f0-9]+\)\s*\{(?=.+'iv')/g)];
-															if (q.length>0) {
-																const a=q[q.length-1].index+q[q.length-1][0].length;
+															let m, a=-1, r=/function\s+[a-z0-9]{43}\(_0x[a-f0-9]+\)\s*\{(?=.+'iv')/g;
+															while ((m = r.exec(txt)) !== null) { a=m.index+m[0].length }
+															if (a!==-1) {
 																for (let i=a, x , b=0, c=false; x=txt[i]; i++) {
 																	if (c) {
 																		if (x==="'") c=false;
@@ -99,7 +99,13 @@ const $s365=(function() {
 															if (ivName) {
 																const decodedStringArray=arrayDecoder(txt); // decodedStringArray
 																if (decodedStringArray) {
-																	const strings=[...fnc.matchAll(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/g)].map(x=>decodedStringArray(x[1]-0,x[2])),
+																	//const strings=[...fnc.matchAll(/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/g)].map(x=>decodedStringArray(x[1]-0,x[2])),
+																	const	strings=(function(){
+																					const r=/=\s*_0x[a-z0-9]+\(\s*["'](0x[a-f0-9]+)["']\s*,\s*["'](.{4})["']\s*\)/g;
+																					let s=[], m;
+																					while ((m = r.exec(fnc)) !== null) s.push(decodedStringArray(m[1]-0,m[2]))	
+																					return s;
+																				})(),
 																				cipher=strings.find(x=>/^(A|3?D)ES-/.test(x));
 																	if (cipher) {
 																		const Q=(strings.find(x=>/^(\d+\|)+\d+$/.test(x))||"").split("|").map(x=>parseInt(x)); //[1,2,0,..] Reihenfolgen-Array der jScrambler-while-Schleife
